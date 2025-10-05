@@ -1,555 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Pastelería Hanna - Móvil</title>
-<style>
-  :root {
-    --primary: #7d3c98;
-    --secondary: #a569bd;
-    --bg: #fef9f4;
-    --card: #fff;
-    --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --shadow: rgba(0,0,0,0.1);
-  }
-  * {
-    box-sizing: border-box;
-    margin: 0; padding: 0;
-  }
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background: var(--primary);
-    color: white;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    box-shadow: 0 2px 5px var(--shadow);
-  }
-  header h1 {
-    font-size: 1.4rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  header h1 span {
-    font-size: 1.8rem;
-  }
-  #hamburger {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.8rem;
-    cursor: pointer;
-  }
-  #clock {
-    font-weight: bold;
-    font-size: 1rem;
-    text-align: right;
-    min-width: 110px;
-  }
-  #fecha {
-    font-size: 0.75rem;
-    margin-top: 0.2rem;
-    display: block;
-  }
-  nav {
-    position: fixed;
-    top: 0; left: 0;
-    height: 100%;
-    width: 250px;
-    background: var(--primary);
-    color: white;
-    padding-top: 3.5rem;
-    transform: translateX(-250px);
-    transition: transform 0.3s ease;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-  }
-  nav.open {
-    transform: translateX(0);
-  }
-  nav h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  nav button {
-    background: none;
-    border: none;
-    color: white;
-    padding: 1rem 2rem;
-    text-align: left;
-    font-size: 1.1rem;
-    cursor: pointer;
-    border-left: 4px solid transparent;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  nav button:hover,
-  nav button.active {
-    background: rgba(255,255,255,0.2);
-    border-left-color: #f4e3ff;
-  }
-  main {
-    flex: 1;
-    padding: 1rem;
-    margin-top: 56px; /* header height */
-    overflow-y: auto;
-    background: var(--bg);
-  }
-  section {
-    display: none;
-  }
-  section.active {
-    display: block;
-  }
-  .resumen {
-    background: #fffbe6;
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.05);
-    margin-bottom: 1rem;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    overflow-x: auto;
-    display: block;
-  }
-  thead {
-    background: var(--primary);
-    color: white;
-  }
-  th, td {
-    padding: 8px 6px;
-    border: 1px solid #ccc;
-    text-align: left;
-    white-space: nowrap;
-  }
-  form {
-    background: var(--card);
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.05);
-    margin-bottom: 1.5rem;
-  }
-  form > * {
-    margin-bottom: 1rem;
-    width: 100%;
-    font-size: 1rem;
-  }
-  input, select, button {
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  button {
-    background: var(--primary);
-    color: white;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: var(--secondary);
-  }
-  .btn-group {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .btn-group button {
-    flex: 1 1 48%;
-    min-width: 140px;
-  }
-  #resultadoReporte {
-    background: var(--card);
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.05);
-    min-height: 180px;
-  }
-  canvas {
-    max-width: 100% !important;
-    height: 300px !important;
-  }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Cobranza en Ruta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f5f6fa;
+      color: #333;
+    }
+
+    /* Panel lateral */
+    .sidebar {
+      width: 240px;
+      background: #ffffff;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-size: 1.4em;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu button {
+      background: none;
+      border: none;
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #333;
+    }
+
+    .menu button:hover, .menu button.active {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .menu button i {
+      margin-right: 10px;
+    }
+
+    /* Área principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .module {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .module.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    header {
+      background: #fff;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.3em;
+      color: #1a73e8;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      padding: 10px;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <button id="hamburger" aria-label="Abrir menú">&#9776;</button>
-  <h1><span>🍰</span> Pastelería Hanna</h1>
-  <div id="clock">
-    00:00:00
-    <span id="fecha"></span>
-  </div>
-</header>
-
-<nav id="navMenu" aria-label="Menú de navegación">
-  <h2>Menú</h2>
-  <button id="btnInicio" class="active">Inicio</button>
-  <button id="btnPedidos">Pedidos</button>
-  <button id="btnReportes">Reportes</button>
-</nav>
-
-<main>
-  <section id="inicio" class="active" tabindex="0" aria-label="Sección inicio">
-    <h2>Pedidos Pendientes</h2>
-    <div class="resumen" aria-live="polite" aria-atomic="true">
-      <p><strong>Total pedidos:</strong> <span id="totalPedidos">0</span></p>
-      <p><strong>Pendientes:</strong> <span id="totalPendientes">0</span></p>
-      <p><strong>Listos:</strong> <span id="totalListos">0</span></p>
-      <p><strong>Entregados:</strong> <span id="totalEntregados">0</span></p>
-    </div>
-    <table aria-describedby="totalPedidos" role="table">
-      <thead>
-        <tr>
-          <th scope="col">Cliente</th>
-          <th scope="col">Teléfono</th>
-          <th scope="col">Entrega</th>
-          <th scope="col">Descripción</th>
-          <th scope="col">Precio</th>
-          <th scope="col">Anticipo</th>
-          <th scope="col">Estatus</th>
-        </tr>
-      </thead>
-      <tbody id="tablaPendientes"></tbody>
-    </table>
-  </section>
-
-  <section id="pedidos" tabindex="0" aria-label="Sección pedidos">
-    <h2>Registrar Pedido</h2>
-    <form id="formPedido" novalidate>
-      <input type="text" id="cliente" name="cliente" placeholder="Cliente" required aria-required="true" />
-      <input type="tel" id="telefono" name="telefono" placeholder="Teléfono" pattern="[0-9]{7,15}" title="Solo números, entre 7 y 15 dígitos" required aria-required="true" />
-      <input type="date" id="fechaEntrega" name="fechaEntrega" required aria-required="true" />
-      <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" required aria-required="true" />
-      <input type="number" id="precio" name="precio" placeholder="Precio" min="0" step="0.01" required aria-required="true" />
-      <input type="number" id="anticipo" name="anticipo" placeholder="Anticipo" min="0" step="0.01" required aria-required="true" />
-      <select id="estatus" name="estatus" required aria-required="true">
-        <option value="Pendiente">Pendiente</option>
-        <option value="Preparación">Preparación</option>
-        <option value="Listo">Listo</option>
-        <option value="Entregado">Entregado</option>
-      </select>
-      <div class="btn-group">
-        <button type="submit">Guardar Pedido</button>
-        <button type="button" id="btnComprobante">Generar Comprobante</button>
+  <!-- Panel lateral -->
+  <div class="sidebar">
+    <div>
+      <h2>💼 Cobranza Ruta</h2>
+      <div class="menu">
+        <button id="btnRuta" class="active"><i>🧭</i>Ruta</button>
+        <button id="btnVentas"><i>💰</i>Ventas</button>
+        <button id="btnConfig"><i>⚙️</i>Configuración</button>
+        <button id="btnReportes"><i>📊</i>Reportes</button>
       </div>
-    </form>
-
-    <h3>Lista de Pedidos</h3>
-    <table aria-label="Lista de pedidos registrados">
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Teléfono</th>
-          <th>Entrega</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Anticipo</th>
-          <th>Estatus</th>
-        </tr>
-      </thead>
-      <tbody id="tablaPedidosForm"></tbody>
-    </table>
-  </section>
-
-  <section id="reportes" tabindex="0" aria-label="Sección reportes">
-    <h2>Reportes</h2>
-    <div id="resultadoReporte">
-      <canvas id="graficoVentas" aria-label="Gráfica de ventas acumuladas" role="img"></canvas>
     </div>
-  </section>
-</main>
+    <footer>© 2025 Sistema de Cobranza</footer>
+  </div>
 
-<script>
-  const navMenu = document.getElementById('navMenu');
-  const hamburgerBtn = document.getElementById('hamburger');
-  const btnInicio = document.getElementById('btnInicio');
-  const btnPedidos = document.getElementById('btnPedidos');
-  const btnReportes = document.getElementById('btnReportes');
-  const sections = {
-    inicio: document.getElementById('inicio'),
-    pedidos: document.getElementById('pedidos'),
-    reportes: document.getElementById('reportes')
-  };
-  let chartVentas = null;
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <header>
+      <h1 id="tituloModulo">Módulo: Ruta</h1>
+    </header>
 
-  function toggleMenu() {
-    navMenu.classList.toggle('open');
-  }
+    <!-- Módulos -->
+    <section id="modRuta" class="module active">
+      <h2>Ruta del día</h2>
+      <p>Aquí se mostrarán los clientes asignados al cobrador y sus pagos pendientes.</p>
+    </section>
 
-  hamburgerBtn.addEventListener('click', toggleMenu);
+    <section id="modVentas" class="module">
+      <h2>Registro de Ventas</h2>
+      <p>Desde aquí se podrán registrar nuevas ventas a los clientes.</p>
+    </section>
 
-  function mostrarSeccion(seccion) {
-    for (const key in sections) {
-      if (key === seccion) {
-        sections[key].classList.add('active');
-      } else {
-        sections[key].classList.remove('active');
-      }
-    }
-    setActiveButton(seccion);
-    if(window.innerWidth < 600) {
-      navMenu.classList.remove('open');
-    }
-  }
+    <section id="modConfig" class="module">
+      <h2>Configuración</h2>
+      <p>Administración de cobradores, clientes y asignaciones.</p>
+    </section>
 
-  function setActiveButton(seccion) {
-    [btnInicio, btnPedidos, btnReportes].forEach(btn => btn.classList.remove('active'));
-    if(seccion === 'inicio') btnInicio.classList.add('active');
-    else if(seccion === 'pedidos') btnPedidos.classList.add('active');
-    else if(seccion === 'reportes') btnReportes.classList.add('active');
-  }
+    <section id="modReportes" class="module">
+      <h2>Reportes</h2>
+      <p>Visualiza los reportes de ventas, cobranza y desempeño general.</p>
+    </section>
+  </div>
 
-  btnInicio.addEventListener('click', () => mostrarSeccion('inicio'));
-  btnPedidos.addEventListener('click', () => mostrarSeccion('pedidos'));
-  btnReportes.addEventListener('click', () => {
-    mostrarSeccion('reportes');
-    generarGraficaAcumulada();
-  });
-
-  // Reloj y fecha
-  function actualizarReloj() {
-    const reloj = document.getElementById('clock');
-    const fechaSpan = document.getElementById('fecha');
-
-    function actualizar() {
-      const ahora = new Date();
-      const hora = ahora.toLocaleTimeString('es-MX', { hour12: false });
-      const fecha = ahora.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
-      const fechaFormateada = fecha.charAt(0).toUpperCase() + fecha.slice(1);
-      reloj.innerHTML = `${hora}<span id="fecha">${fechaFormateada}</span>`;
-    }
-
-    actualizar();
-    setInterval(actualizar, 1000);
-  }
-
-  // Cargar pedidos demo
-  function cargarPedidosDemo() {
-    const demo = [
-      { cliente: "Ana López", telefono: "5551234567", fechaEntrega: "2025-01-10", descripcion: "Pastel Chocolate", precio: 400, anticipo: 200, estatus: "Entregado" },
-      { cliente: "Carlos Ruiz", telefono: "5559876543", fechaEntrega: "2025-02-15", descripcion: "Pastel Vainilla", precio: 350, anticipo: 150, estatus: "Listo" },
-      { cliente: "María Sánchez", telefono: "5552223344", fechaEntrega: "2025-03-20", descripcion: "Cheesecake", precio: 300, anticipo: 100, estatus: "Pendiente" },
-      { cliente: "José Martínez", telefono: "5553344556", fechaEntrega: "2025-04-05", descripcion: "Brownies", precio: 250, anticipo: 125, estatus: "Entregado" },
-      { cliente: "Laura Torres", telefono: "5556677889", fechaEntrega: "2025-05-12", descripcion: "Panqué Limón", precio: 200, anticipo: 100, estatus: "Preparación" },
-      { cliente: "Diego Fernández", telefono: "5558899001", fechaEntrega: "2025-06-25", descripcion: "Pastel Zanahoria", precio: 320, anticipo: 160, estatus: "Entregado" }
-    ];
-    if (!localStorage.getItem('pedidos')) {
-      localStorage.setItem('pedidos', JSON.stringify(demo));
-    }
-  }
-
-  // Mostrar tabla pedidos (para Inicio y Pedidos)
-  function cargarTablaPedidos() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-    const tbodyInicio = document.getElementById('tablaPendientes');
-    const tbodyPedidos = document.getElementById('tablaPedidosForm');
-
-    tbodyInicio.innerHTML = '';
-    tbodyPedidos.innerHTML = '';
-
-    pedidos.forEach(p => {
-      const fecha = new Date(p.fechaEntrega).toLocaleDateString('es-MX', { day:'2-digit', month:'2-digit', year:'numeric' });
-
-      const fila = `
-        <tr>
-          <td>${p.cliente}</td>
-          <td>${p.telefono}</td>
-          <td>${fecha}</td>
-          <td>${p.descripcion}</td>
-          <td>$${p.precio}</td>
-          <td>$${p.anticipo}</td>
-          <td>${p.estatus}</td>
-        </tr>`;
-
-      tbodyInicio.insertAdjacentHTML('beforeend', fila);
-      tbodyPedidos.insertAdjacentHTML('beforeend', fila);
-    });
-  }
-
-  // Actualizar resumen de pedidos
-  function actualizarResumenPedidos() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-    document.getElementById('totalPedidos').textContent = pedidos.length;
-    document.getElementById('totalPendientes').textContent = pedidos.filter(p => p.estatus === 'Pendiente').length;
-    document.getElementById('totalListos').textContent = pedidos.filter(p => p.estatus === 'Listo').length;
-    document.getElementById('totalEntregados').textContent = pedidos.filter(p => p.estatus === 'Entregado').length;
-  }
-
-  // Guardar pedido
-  const formPedido = document.getElementById('formPedido');
-  formPedido.addEventListener('submit', e => {
-    e.preventDefault();
-
-    const nuevoPedido = {
-      cliente: formPedido.cliente.value.trim(),
-      telefono: formPedido.telefono.value.trim(),
-      fechaEntrega: formPedido.fechaEntrega.value,
-      descripcion: formPedido.descripcion.value.trim(),
-      precio: parseFloat(formPedido.precio.value),
-      anticipo: parseFloat(formPedido.anticipo.value),
-      estatus: formPedido.estatus.value
+  <script>
+    const botones = {
+      btnRuta: 'modRuta',
+      btnVentas: 'modVentas',
+      btnConfig: 'modConfig',
+      btnReportes: 'modReportes'
     };
 
-    if (!nuevoPedido.cliente || !nuevoPedido.telefono || !nuevoPedido.fechaEntrega || !nuevoPedido.descripcion || isNaN(nuevoPedido.precio) || isNaN(nuevoPedido.anticipo)) {
-      alert('Por favor, completa todos los campos correctamente.');
-      return;
-    }
+    const titulo = document.getElementById('tituloModulo');
 
-    const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-    pedidos.push(nuevoPedido);
-    localStorage.setItem('pedidos', JSON.stringify(pedidos));
+    Object.keys(botones).forEach(id => {
+      document.getElementById(id).addEventListener('click', () => {
+        // Quitar clase activa de todos los botones
+        Object.keys(botones).forEach(btn => {
+          document.getElementById(btn).classList.remove('active');
+          document.getElementById(botones[btn]).classList.remove('active');
+        });
 
-    alert('Pedido guardado');
-
-    formPedido.reset();
-    cargarTablaPedidos();
-    actualizarResumenPedidos();
-  });
-
-  // Generar comprobante (abrir ventana para imprimir)
-  document.getElementById('btnComprobante').addEventListener('click', () => {
-    const cliente = formPedido.cliente.value.trim();
-    const telefono = formPedido.telefono.value.trim();
-    const fecha = formPedido.fechaEntrega.value;
-    const descripcion = formPedido.descripcion.value.trim();
-    const precio = formPedido.precio.value;
-    const anticipo = formPedido.anticipo.value;
-    const estatus = formPedido.estatus.value;
-
-    if (!cliente || !telefono || !fecha || !descripcion || !precio || !anticipo) {
-      alert('Completa el formulario antes de generar el comprobante.');
-      return;
-    }
-
-    const ventana = window.open('', '', 'width=600,height=800');
-    ventana.document.write(`
-      <html><head><title>Comprobante</title></head>
-      <body style="font-family:sans-serif; padding:2rem;">
-        <h2 style="color:#7d3c98;">🍰 Pastelería Hanna</h2>
-        <p><strong>Cliente:</strong> ${cliente}</p>
-        <p><strong>Teléfono:</strong> ${telefono}</p>
-        <p><strong>Fecha de Entrega:</strong> ${fecha}</p>
-        <p><strong>Descripción:</strong> ${descripcion}</p>
-        <p><strong>Precio:</strong> $${precio}</p>
-        <p><strong>Anticipo:</strong> $${anticipo}</p>
-        <p><strong>Estatus:</strong> ${estatus}</p>
-        <hr>
-        <p>Gracias por tu pedido 💜</p>
-        <p style="font-size:0.9rem;">Síguenos en: facebook.com/pasteleriahanna</p>
-      </body></html>`);
-    ventana.document.close();
-    ventana.print();
-  });
-
-  // Generar gráfica de ventas acumuladas por mes
-  function generarGraficaAcumulada() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-    const ventasPorMes = {};
-
-    pedidos.forEach(p => {
-      const d = new Date(p.fechaEntrega);
-      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`;
-      ventasPorMes[ym] = (ventasPorMes[ym] || 0) + p.precio;
+        // Activar el seleccionado
+        document.getElementById(id).classList.add('active');
+        document.getElementById(botones[id]).classList.add('active');
+        titulo.textContent = 'Módulo: ' + document.getElementById(id).textContent.trim();
+      });
     });
-
-    const labels = Object.keys(ventasPorMes).sort();
-    const dataVentas = labels.map(ym => ventasPorMes[ym]);
-
-    const ctx = document.getElementById('graficoVentas').getContext('2d');
-
-    if(chartVentas) chartVentas.destroy();
-
-    chartVentas = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Ventas Acumuladas por Mes',
-          data: dataVentas,
-          backgroundColor: [
-            'rgba(125, 60, 152, 0.8)',
-            'rgba(142, 68, 173, 0.8)',
-            'rgba(155, 89, 182, 0.8)',
-            'rgba(165, 105, 189, 0.8)',
-            'rgba(174, 109, 192, 0.8)',
-            'rgba(183, 110, 193, 0.8)'
-          ],
-          borderColor: 'rgba(125, 60, 152, 1)',
-          borderWidth: 2,
-          borderSkipped: false,
-          barPercentage: 0.7,
-          categoryPercentage: 0.7,
-          hoverBackgroundColor: 'rgba(102, 51, 153, 0.9)'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#7d3c98',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
-            }
-          },
-          tooltip: {
-            enabled: true,
-            backgroundColor: 'rgba(125, 60, 152, 0.8)',
-            titleFont: { size: 14, weight: 'bold' },
-            bodyFont: { size: 12 }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#7d3c98', font: { size: 13 } },
-            grid: { color: 'rgba(125, 60, 152, 0.1)' }
-          },
-          x: {
-            ticks: {
-              color: '#7d3c98',
-              font: { size: 13 },
-              callback(value) {
-                const ym = this.getLabelForValue(value);
-                const parts = ym.split('-');
-                return parts[1] + '/' + parts[0];
-              }
-            },
-            grid: { display: false }
-          }
-        }
-      }
-    });
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    cargarPedidosDemo();
-    cargarTablaPedidos();
-    actualizarResumenPedidos();
-    actualizarReloj();
-    generarGraficaAcumulada();
-  });
-</script>
-
+  </script>
 </body>
 </html>
