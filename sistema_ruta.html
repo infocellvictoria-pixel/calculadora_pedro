@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Cobranza en Ruta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f5f6fa;
+      color: #333;
+    }
+
+    /* Panel lateral */
+    .sidebar {
+      width: 240px;
+      background: #ffffff;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-size: 1.4em;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu button {
+      background: none;
+      border: none;
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #333;
+    }
+
+    .menu button:hover, .menu button.active {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .menu button i {
+      margin-right: 10px;
+    }
+
+    /* Área principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .module {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .module.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    header {
+      background: #fff;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.3em;
+      color: #1a73e8;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      padding: 10px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Panel lateral -->
+  <div class="sidebar">
+    <div>
+      <h2>💼 Cobranza Ruta</h2>
+      <div class="menu">
+        <button id="btnRuta" class="active"><i>🧭</i>Ruta</button>
+        <button id="btnVentas"><i>💰</i>Ventas</button>
+        <button id="btnConfig"><i>⚙️</i>Configuración</button>
+        <button id="btnReportes"><i>📊</i>Reportes</button>
+      </div>
+    </div>
+    <footer>© 2025 Sistema de Cobranza</footer>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <header>
+      <h1 id="tituloModulo">Módulo: Ruta</h1>
+    </header>
+
+    <!-- Módulos -->
+    <section id="modRuta" class="module active">
+      <h2>Ruta del día</h2>
+      <p>Aquí se mostrarán los clientes asignados al cobrador y sus pagos pendientes.</p>
+    </section>
+
+    <section id="modVentas" class="module">
+      <h2>Registro de Ventas</h2>
+      <p>Desde aquí se podrán registrar nuevas ventas a los clientes.</p>
+    </section>
+
+    <section id="modConfig" class="module">
+      <h2>Configuración</h2>
+      <p>Administración de cobradores, clientes y asignaciones.</p>
+    </section>
+
+    <section id="modReportes" class="module">
+      <h2>Reportes</h2>
+      <p>Visualiza los reportes de ventas, cobranza y desempeño general.</p>
+    </section>
+  </div>
+
+  <script>
+    const botones = {
+      btnRuta: 'modRuta',
+      btnVentas: 'modVentas',
+      btnConfig: 'modConfig',
+      btnReportes: 'modReportes'
+    };
+
+    const titulo = document.getElementById('tituloModulo');
+
+    Object.keys(botones).forEach(id => {
+      document.getElementById(id).addEventListener('click', () => {
+        // Quitar clase activa de todos los botones
+        Object.keys(botones).forEach(btn => {
+          document.getElementById(btn).classList.remove('active');
+          document.getElementById(botones[btn]).classList.remove('active');
+        });
+
+        // Activar el seleccionado
+        document.getElementById(id).classList.add('active');
+        document.getElementById(botones[id]).classList.add('active');
+        titulo.textContent = 'Módulo: ' + document.getElementById(id).textContent.trim();
+      });
+    });
+  </script>
+</body>
+</html>
