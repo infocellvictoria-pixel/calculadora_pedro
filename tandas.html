@@ -1,345 +1,304 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agenda de Préstamos</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f1f1f1;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #0d5ea3;
-      padding: 1rem 2rem;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .nav {
-      display: flex;
-      gap: 1rem;
-    }
-    .nav button {
-      background: white;
-      color: #0d5ea3;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .nav button:hover {
-      background-color: #e0eaf5;
-    }
-    .modulo {
-      display: none;
-      padding: 1.5rem;
-    }
-    .activo {
-      display: block;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      background: #0d5ea3;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    input, select {
-      padding: 0.5rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      background: #fff;
-    }
-    table th, table td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: left;
-    }
-    table th {
-      background: #e0eaf5;
-    }
-    .calc-container {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .calc-container h2 {
-      color: #4CAF50;
-      margin-bottom: 20px;
-    }
-    .calc-container label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-    }
-    .calc-container input {
-      width: 100%;
-      margin-top: 4px;
-      margin-bottom: 10px;
-    }
-    .result, .detail {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    .interest-breakdown {
-      margin-top: 15px;
-      max-height: 200px;
-      overflow-y: auto;
-      font-size: 14px;
-    }
-  </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sistema de Control de Ganado</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f4f6f8;
+margin:0;
+}
+
+header{
+background:#1B5E20;
+color:white;
+text-align:center;
+padding:18px;
+font-size:20px;
+font-weight:600;
+}
+
+.container{
+padding:18px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:6px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#43A047;
+color:white;
+font-size:16px;
+margin-top:8px;
+}
+
+.result{
+background:#F1F8E9;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.hidden{
+display:none;
+}
+
+.registro{
+background:white;
+padding:12px;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+</style>
+
 </head>
-<body onload="mostrarModulo('resumen')">
-  <header>
-    <h1>Agenda de Préstamos</h1>
-    <div class="nav">
-      <button onclick="mostrarModulo('resumen')">📊 Resumen</button>
-      <button onclick="mostrarModulo('prestamos')">💰 Préstamos</button>
-      <button onclick="mostrarModulo('clientes')">👥 Clientes</button>
-      <button onclick="mostrarModulo('calculadora')">📋 Calculadora</button>
-      <button onclick="mostrarModulo('reportes')">📄 Reportes</button>
-    </div>
-  </header>
 
-  <div id="resumen" class="modulo activo">
-    <h2>📊 Resumen</h2>
-    <label for="filtroResumen">Filtrar:</label>
-    <select id="filtroResumen" onchange="mostrarResumen()">
-      <option value="todos">Todos</option>
-      <option value="vencidos">Vencidos</option>
-      <option value="porvencer">Por vencer</option>
-    </select>
-    <table>
-      <thead><tr><th>Cliente</th><th>Monto</th><th>Vencimiento</th><th>Estado</th></tr></thead>
-      <tbody id="tablaResumen"></tbody>
-    </table>
-  </div>
+<body>
 
-  <div id="prestamos" class="modulo">
-    <h2>💰 Préstamos</h2>
-    <form onsubmit="guardarPrestamo(event)">
-      <label>Cliente:</label>
-      <input id="clientePrestamo" required>
-      <label>Monto:</label>
-      <input id="montoPrestamo" type="number" required>
-      <label>Fecha vencimiento:</label>
-      <input id="fechaVencimiento" type="date" required>
-      <button>Guardar préstamo</button>
-    </form>
-    <table>
-      <thead><tr><th>Cliente</th><th>Monto</th><th>Vencimiento</th><th>Estado</th><th>Detalle</th><th>Acciones</th></tr></thead>
-      <tbody id="tablaPrestamos"></tbody>
-    </table>
-  </div>
+<header>
+🐄 SISTEMA DE CONTROL DE GANADO
+</header>
 
-  <div id="clientes" class="modulo">
-    <h2>👥 Clientes</h2>
-    <form onsubmit="guardarCliente(event)">
-      <label>Nombre completo:</label>
-      <input id="nombreCliente" required>
-      <label>Teléfono:</label>
-      <input id="telefonoCliente" required>
-      <button>Registrar Cliente</button>
-    </form>
-    <table>
-      <thead><tr><th>Nombre</th><th>Teléfono</th><th>Acciones</th></tr></thead>
-      <tbody id="tablaClientes"></tbody>
-    </table>
-  </div>
+<div class="container">
 
-  <div id="calculadora" class="modulo">
-    <div class="calc-container">
-      <h2>📋 Calculadora de Préstamo</h2>
-      <label>Nombre del cliente</label>
-      <input type="text" id="clientName">
-      <label>Monto del préstamo (MXN)</label>
-      <input type="number" id="loanAmount">
-      <label>Tasa de interés (%)</label>
-      <input type="number" id="interestRate">
-      <label>Meses vencidos</label>
-      <input type="number" id="monthsVencidos" min="1">
-      <label>Fecha inicial del préstamo</label>
-      <input type="date" id="startDate">
-      <button onclick="calculateLoan()">Calcular</button>
-      <button onclick="downloadPDF()" style="background:#f44336;margin-top:10px">Generar comprobante</button>
-      <div class="result" id="result"></div>
-      <div class="interest-breakdown" id="interestBreakdown"></div>
-    </div>
-  </div>
+<!-- FORMULARIO -->
+<div id="pantallaRegistro" class="card">
 
-  <div id="reportes" class="modulo">
-    <h2>📄 Reportes</h2>
-    <table>
-      <thead><tr><th>Cliente</th><th>Monto</th><th>Vencimiento</th><th>Estado</th></tr></thead>
-      <tbody id="tablaReportes"></tbody>
-    </table>
-  </div>
+<label>Fecha de llegada</label>
+<input type="date" id="fecha">
 
-  <script>
-    let prestamos = JSON.parse(localStorage.getItem("prestamos") || "[]");
-    let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+<label>Propietario</label>
+<input id="propietario">
 
-    function mostrarModulo(id) {
-      document.querySelectorAll('.modulo').forEach(m => m.classList.remove('activo'));
-      document.getElementById(id).classList.add('activo');
-      if (id === 'resumen') mostrarResumen();
-      if (id === 'prestamos') mostrarPrestamos();
-      if (id === 'clientes') mostrarClientes();
-      if (id === 'reportes') generarReporte();
-    }
+<label>Sexo</label>
+<select id="sexo">
+<option>Macho</option>
+<option>Hembra</option>
+</select>
 
-    function guardarCliente(e) {
-      e.preventDefault();
-      const nombre = document.getElementById("nombreCliente").value;
-      const telefono = document.getElementById("telefonoCliente").value;
-      clientes.push({ nombre, telefono });
-      localStorage.setItem("clientes", JSON.stringify(clientes));
-      document.getElementById("nombreCliente").value = "";
-      document.getElementById("telefonoCliente").value = "";
-      mostrarClientes();
-    }
+<label>Arete SINIIGA</label>
+<input id="arete1">
 
-    function mostrarClientes() {
-      const tbody = document.getElementById("tablaClientes");
-      tbody.innerHTML = "";
-      clientes.forEach((c, i) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${c.nombre}</td><td>${c.telefono}</td><td><button onclick="eliminarCliente(${i})">Eliminar</button></td>`;
-        tbody.appendChild(tr);
-      });
-    }
+<label>Arete Control</label>
+<input id="arete2">
 
-    function eliminarCliente(i) {
-      if (confirm("¿Eliminar cliente?")) {
-        clientes.splice(i, 1);
-        localStorage.setItem("clientes", JSON.stringify(clientes));
-        mostrarClientes();
-      }
-    }
+<label>Peso llegada</label>
+<input type="number" id="pesoLlegada" oninput="calcular()">
 
-    function guardarPrestamo(e) {
-      e.preventDefault();
-      const cliente = document.getElementById("clientePrestamo").value;
-      const monto = parseFloat(document.getElementById("montoPrestamo").value);
-      const vencimiento = document.getElementById("fechaVencimiento").value;
-      prestamos.push({ cliente, monto, vencimiento, estado: "Activo", abonos: 0 });
-      localStorage.setItem("prestamos", JSON.stringify(prestamos));
-      e.target.reset();
-      mostrarPrestamos();
-    }
+<label>Peso origen</label>
+<input type="number" id="pesoOrigen" oninput="calcular()">
 
-    function mostrarPrestamos() {
-      const tbody = document.getElementById("tablaPrestamos");
-      tbody.innerHTML = "";
-      prestamos.forEach((p, i) => {
-        const saldo = p.monto - (p.abonos || 0);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${p.cliente}</td><td>$${p.monto}</td><td>${new Date(p.vencimiento).toLocaleDateString('es-MX')}</td><td>${p.estado}</td><td>Abonado: $${p.abonos}<br>Saldo: $${saldo}</td><td><button onclick="abonarPrestamo(${i})">Abonar</button> <button onclick="liquidarPrestamo(${i})">Liquidar</button> <button onclick="eliminarPrestamo(${i})">Eliminar</button></td>`;
-        tbody.appendChild(tr);
-      });
-    }
+<div class="result">
+Merma: <span id="merma">0</span>
+</div>
 
-    function abonarPrestamo(i) {
-      const cantidad = parseFloat(prompt("Cantidad a abonar:"));
-      if (!isNaN(cantidad) && cantidad > 0) {
-        prestamos[i].abonos += cantidad;
-        if (prestamos[i].abonos >= prestamos[i].monto) prestamos[i].estado = "Liquidado";
-        localStorage.setItem("prestamos", JSON.stringify(prestamos));
-        mostrarPrestamos();
-      }
-    }
+<div class="result">
+Porcentaje Merma: <span id="porcentaje">0</span> %
+</div>
 
-    function liquidarPrestamo(i) {
-      prestamos[i].estado = "Liquidado";
-      localStorage.setItem("prestamos", JSON.stringify(prestamos));
-      mostrarPrestamos();
-    }
+<label>Precio</label>
+<input type="number" id="precio" oninput="calcular()">
 
-    function eliminarPrestamo(i) {
-      if (confirm("¿Eliminar préstamo?")) {
-        prestamos.splice(i, 1);
-        localStorage.setItem("prestamos", JSON.stringify(prestamos));
-        mostrarPrestamos();
-      }
-    }
+<div class="result">
+Total: $ <span id="total">0</span>
+</div>
 
-    function mostrarResumen() {
-      const filtro = document.getElementById("filtroResumen").value;
-      const tbody = document.getElementById("tablaResumen");
-      tbody.innerHTML = "";
-      const hoy = new Date();
-      prestamos.forEach(p => {
-        if (p.estado === "Liquidado") return;
-        const v = new Date(p.vencimiento);
-        const dif = (v - hoy) / (1000 * 60 * 60 * 24);
-        if ((filtro === "vencidos" && dif < 0) || (filtro === "porvencer" && dif >= 0 && dif <= 7) || filtro === "todos") {
-          const tr = document.createElement("tr");
-          const saldo = p.monto - (p.abonos || 0);
-          tr.innerHTML = `<td>${p.cliente}</td><td>$${p.monto}<br>Abonado: $${p.abonos || 0}<br>Saldo: $${saldo}</td><td>${v.toLocaleDateString("es-MX")}</td><td>${p.estado}</td>`;
-          tbody.appendChild(tr);
-        }
-      });
-    }
+<label>¿Trae Arete?</label>
+<select id="traeArete" onchange="calcular()">
+<option value="no">No</option>
+<option value="si">Si</option>
+</select>
 
-    function generarReporte() {
-      const tbody = document.getElementById("tablaReportes");
-      tbody.innerHTML = "";
-      prestamos.forEach(p => {
-        const tr = document.createElement("tr");
-        const saldo = p.monto - (p.abonos || 0);
-        tr.innerHTML = `<td>${p.cliente}</td><td>$${p.monto}<br>Abonado: $${p.abonos || 0}<br>Saldo: $${saldo}</td><td>${new Date(p.vencimiento).toLocaleDateString("es-MX")}</td><td>${p.estado}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
+<label>Precio Arete</label>
+<input type="number" id="precioArete" oninput="calcular()">
 
-    function calculateLoan() {
-      const name = document.getElementById("clientName").value;
-      const amount = parseFloat(document.getElementById("loanAmount").value);
-      const rate = parseFloat(document.getElementById("interestRate").value);
-      const months = parseInt(document.getElementById("monthsVencidos").value);
-      const start = document.getElementById("startDate").value;
-      if (!name || isNaN(amount) || isNaN(rate) || isNaN(months) || !start) return;
-      const date = new Date(start);
-      let breakdown = "";
-      let total = amount;
-      for (let i = 1; i <= months; i++) {
-        const interest = total * (rate / 100);
-        total += interest;
-        const due = new Date(date.getFullYear(), date.getMonth() + i, date.getDate());
-        breakdown += `Mes ${i}: $${Math.round(interest)} MXN (${due.toLocaleDateString('es-MX')})<br>`;
-      }
-      document.getElementById("result").innerHTML = `Total a liquidar: $${Math.round(total)} MXN`;
-      document.getElementById("interestBreakdown").innerHTML = breakdown;
-      lastCalculation = { name, start, amount, months, total };
-    }
+<div class="result">
+Total Final: $ <span id="totalFinal">0</span>
+</div>
 
-    let lastCalculation = null;
-    function downloadPDF() {
-      if (!lastCalculation) return;
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text(`Comprobante de préstamo para: ${lastCalculation.name}`, 10, 10);
-      doc.text(`Fecha inicio: ${lastCalculation.start}`, 10, 20);
-      doc.text(`Monto inicial: $${lastCalculation.amount}`, 10, 30);
-      doc.text(`Meses vencidos: ${lastCalculation.months}`, 10, 40);
-      doc.text(`Total a liquidar: $${Math.round(lastCalculation.total)}`, 10, 50);
-      doc.save("Comprobante_Prestamo.pdf");
-    }
-  </script>
+<button onclick="guardar()">Guardar Registro</button>
+
+<button onclick="verReportes()">Ver Reportes</button>
+
+</div>
+
+
+<!-- REPORTES -->
+<div id="pantallaReportes" class="card hidden">
+
+<h3>Reportes</h3>
+
+<label>Propietario</label>
+<input id="filtroProp">
+
+<label>Sexo</label>
+<select id="filtroSexo">
+<option value="">Todos</option>
+<option>Macho</option>
+<option>Hembra</option>
+</select>
+
+<button onclick="filtrar()">Filtrar</button>
+
+<hr>
+
+<div id="lista"></div>
+
+<button onclick="volver()">Volver</button>
+
+</div>
+
+</div>
+
+<script>
+
+let registros=JSON.parse(localStorage.getItem("ganado")) || []
+
+function calcular(){
+
+let pesoLlegada=parseFloat(document.getElementById("pesoLlegada").value)||0
+let pesoOrigen=parseFloat(document.getElementById("pesoOrigen").value)||0
+let precio=parseFloat(document.getElementById("precio").value)||0
+let precioArete=parseFloat(document.getElementById("precioArete").value)||0
+let trae=document.getElementById("traeArete").value
+
+let merma=pesoOrigen-pesoLlegada
+if(merma<0)merma=0
+
+let porcentaje=0
+if(pesoOrigen>0){
+porcentaje=(merma/pesoOrigen)*100
+}
+
+let total=pesoOrigen*precio
+
+let totalFinal=total
+if(trae==="si"){
+totalFinal=total+precioArete
+}
+
+document.getElementById("merma").innerText=merma.toFixed(2)
+document.getElementById("porcentaje").innerText=porcentaje.toFixed(2)
+document.getElementById("total").innerText=total.toFixed(2)
+document.getElementById("totalFinal").innerText=totalFinal.toFixed(2)
+
+}
+
+function guardar(){
+
+let registro={
+fecha:document.getElementById("fecha").value,
+propietario:document.getElementById("propietario").value,
+sexo:document.getElementById("sexo").value,
+arete1:document.getElementById("arete1").value,
+arete2:document.getElementById("arete2").value,
+pesoLlegada:document.getElementById("pesoLlegada").value,
+pesoOrigen:document.getElementById("pesoOrigen").value,
+precio:document.getElementById("precio").value,
+totalFinal:document.getElementById("totalFinal").innerText
+}
+
+registros.push(registro)
+
+localStorage.setItem("ganado",JSON.stringify(registros))
+
+alert("Registro guardado")
+
+}
+
+function verReportes(){
+
+document.getElementById("pantallaRegistro").classList.add("hidden")
+document.getElementById("pantallaReportes").classList.remove("hidden")
+
+mostrarLista(registros)
+
+}
+
+function volver(){
+
+document.getElementById("pantallaReportes").classList.add("hidden")
+document.getElementById("pantallaRegistro").classList.remove("hidden")
+
+}
+
+function mostrarLista(datos){
+
+let lista=document.getElementById("lista")
+
+lista.innerHTML=""
+
+datos.forEach(r=>{
+
+lista.innerHTML+=`
+
+<div class="registro">
+
+<b>Fecha:</b> ${r.fecha}<br>
+<b>Propietario:</b> ${r.propietario}<br>
+<b>Sexo:</b> ${r.sexo}<br>
+<b>Arete:</b> ${r.arete1}<br>
+<b>Total Final:</b> $${r.totalFinal}
+
+</div>
+
+`
+
+})
+
+}
+
+function filtrar(){
+
+let prop=document.getElementById("filtroProp").value.toLowerCase()
+let sexo=document.getElementById("filtroSexo").value
+
+let resultado=registros.filter(r=>{
+
+let cumpleProp=r.propietario.toLowerCase().includes(prop)
+let cumpleSexo=!sexo || r.sexo===sexo
+
+return cumpleProp && cumpleSexo
+
+})
+
+mostrarLista(resultado)
+
+}
+
+</script>
+
 </body>
 </html>
+
+
