@@ -1,219 +1,303 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registro de Personal</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>Sistema de Control de Ganado</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto}
-body{margin:0;background:#f1f3f6;color:#111}
-header{background:#0f172a;color:#fff;padding:14px;text-align:center;cursor:pointer}
-header h1{margin:0;font-size:16px}
-.container{padding:20px 14px;max-width:520px;margin:auto}
-.datetime{text-align:center;margin-bottom:24px}
-.datetime .date{font-size:13px;color:#374151}
-.datetime .time{font-size:22px;font-weight:600}
-.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 6px 16px rgba(0,0,0,.06);margin-bottom:22px}
-button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px}
-.btn-admin{background:#2563eb;color:#fff}
-.btn-col{background:#6b7280;color:#fff}
-.btn-back{background:#e5e7eb;color:#111}
-input,select{width:100%;padding:10px;margin-bottom:14px;border-radius:10px;border:1px solid #d1d5db;font-size:14px}
-.hidden{display:none}
-.list{border-bottom:1px solid #e5e7eb;padding:10px 0}
-.small{font-size:12px;color:#6b7280}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#f4f6f8;
+margin:0;
+}
+
+header{
+background:#1B5E20;
+color:white;
+text-align:center;
+padding:18px;
+font-size:20px;
+font-weight:600;
+}
+
+.container{
+padding:18px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:6px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#43A047;
+color:white;
+font-size:16px;
+margin-top:8px;
+}
+
+.result{
+background:#F1F8E9;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.hidden{
+display:none;
+}
+
+.registro{
+background:white;
+padding:12px;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
 </style>
+
 </head>
 
 <body>
 
-<header onclick="volverInicio()">
-<h1>Registro de Personal</h1>
+<header>
+🐄 SISTEMA DE CONTROL DE GANADO
 </header>
 
 <div class="container">
 
-<div class="datetime" id="datetime"></div>
+<!-- FORMULARIO -->
+<div id="pantallaRegistro" class="card">
 
-<!-- INICIO -->
-<div class="card" id="inicio">
-<button class="btn-admin" onclick="abrirAdmin()">⚙️ ADMIN</button>
-<button class="btn-col" onclick="abrirColaborador()">👤 COLABORADOR</button>
-</div>
+<label>Fecha de llegada</label>
+<input type="date" id="fecha">
 
-<!-- LOGIN ADMIN -->
-<div class="card hidden" id="loginAdmin">
-<h2>Administrador</h2>
-<input id="adminPass" type="password" placeholder="Contraseña">
-<button class="btn-admin" onclick="validarAdmin()">Entrar</button>
-<button class="btn-back" onclick="volverInicio()">⬅️ Regresar</button>
-</div>
+<label>Propietario</label>
+<input id="propietario">
 
-<!-- PANEL ADMIN -->
-<div class="card hidden" id="panelAdmin">
-<h2>Panel Administrador</h2>
-<button class="btn-admin" onclick="mostrarAlta()">➕ Alta colaborador</button>
-<button class="btn-admin" onclick="mostrarLista()">📋 Colaboradores</button>
-<button class="btn-admin" onclick="mostrarReporte()">📊 Reporte de beneficiarios</button>
-<button class="btn-back" onclick="volverInicio()">⬅️ Cerrar sesión</button>
-</div>
-
-<!-- ALTA COLABORADOR -->
-<div class="card hidden" id="altaCol">
-<h2>Alta Colaborador</h2>
-<input id="colNombre" placeholder="Nombre completo">
-<input id="colPassNew" type="password" placeholder="Contraseña">
-<input id="colZona" placeholder="Zona">
-<select id="colEstatus">
-<option value="activo">Activo</option>
-<option value="baja">Baja</option>
+<label>Sexo</label>
+<select id="sexo">
+<option>Macho</option>
+<option>Hembra</option>
 </select>
-<button class="btn-admin" onclick="guardarColaborador()">Guardar</button>
-<button class="btn-back" onclick="volverPanelAdmin()">⬅️ Regresar</button>
+
+<label>Arete SINIIGA</label>
+<input id="arete1">
+
+<label>Arete Control</label>
+<input id="arete2">
+
+<label>Peso llegada</label>
+<input type="number" id="pesoLlegada" oninput="calcular()">
+
+<label>Peso origen</label>
+<input type="number" id="pesoOrigen" oninput="calcular()">
+
+<div class="result">
+Merma: <span id="merma">0</span>
 </div>
 
-<!-- LISTA COLABORADORES -->
-<div class="card hidden" id="listaCol">
-<h2>Colaboradores</h2>
+<div class="result">
+Porcentaje Merma: <span id="porcentaje">0</span> %
+</div>
+
+<label>Precio</label>
+<input type="number" id="precio" oninput="calcular()">
+
+<div class="result">
+Total: $ <span id="total">0</span>
+</div>
+
+<label>¿Trae Arete?</label>
+<select id="traeArete" onchange="calcular()">
+<option value="no">No</option>
+<option value="si">Si</option>
+</select>
+
+<label>Precio Arete</label>
+<input type="number" id="precioArete" oninput="calcular()">
+
+<div class="result">
+Total Final: $ <span id="totalFinal">0</span>
+</div>
+
+<button onclick="guardar()">Guardar Registro</button>
+
+<button onclick="verReportes()">Ver Reportes</button>
+
+</div>
+
+
+<!-- REPORTES -->
+<div id="pantallaReportes" class="card hidden">
+
+<h3>Reportes</h3>
+
+<label>Propietario</label>
+<input id="filtroProp">
+
+<label>Sexo</label>
+<select id="filtroSexo">
+<option value="">Todos</option>
+<option>Macho</option>
+<option>Hembra</option>
+</select>
+
+<button onclick="filtrar()">Filtrar</button>
+
+<hr>
+
 <div id="lista"></div>
-<button class="btn-back" onclick="volverPanelAdmin()">⬅️ Regresar</button>
-</div>
 
-<!-- REPORTE -->
-<div class="card hidden" id="reporte">
-<h2>Reporte de Beneficiarios</h2>
-<select id="filtroCol" onchange="cargarReporte()"></select>
-<div id="tablaReporte"></div>
-<button class="btn-admin" onclick="exportarExcel()">Exportar Excel</button>
-<button class="btn-admin" onclick="exportarPDF()">Exportar PDF</button>
-<button class="btn-back" onclick="volverPanelAdmin()">⬅️ Regresar</button>
-</div>
+<button onclick="volver()">Volver</button>
 
-<!-- LOGIN COLABORADOR -->
-<div class="card hidden" id="loginCol">
-<h2>Colaborador</h2>
-<select id="selectCol"></select>
-<input id="colPass" type="password" placeholder="Contraseña">
-<button class="btn-col" onclick="validarColaborador()">Entrar</button>
-<button class="btn-back" onclick="volverInicio()">⬅️ Regresar</button>
-</div>
-
-<!-- PANEL COLABORADOR -->
-<div class="card hidden" id="panelCol">
-<h2>Mi Información</h2>
-<div id="infoCol"></div>
-<button class="btn-col" onclick="mostrarBenefCol()">👨‍👩‍👧 Mis Beneficiarios</button>
-<button class="btn-back" onclick="volverInicio()">⬅️ Cerrar sesión</button>
-</div>
-
-<!-- BENEFICIARIOS COLABORADOR -->
-<div class="card hidden" id="benefCol">
-<h2>Mis Beneficiarios</h2>
-<input id="bNombre" placeholder="Nombre">
-<input id="bTel" placeholder="Teléfono">
-<input id="bCorreo" placeholder="Correo">
-<input id="bDir" placeholder="Dirección">
-<select id="bEst">
-<option value="activo">Activo</option>
-<option value="baja">Baja</option>
-</select>
-<button class="btn-col" onclick="guardarBenefCol()">Guardar Beneficiario</button>
-<div id="listaBen"></div>
-<button class="btn-back" onclick="volverPanelCol()">⬅️ Regresar</button>
 </div>
 
 </div>
 
 <script>
-/* FECHA Y HORA */
-function actualizarFechaHora(){
-const n=new Date();
-const f=n.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-let h=n.getHours(),m=n.getMinutes().toString().padStart(2,'0'),a=h>=12?'PM':'AM';
-h=h%12||12;
-datetime.innerHTML=`<div class="date">${f}</div><div class="time">${h}:${m} ${a}</div>`;
-}
-setInterval(actualizarFechaHora,1000);actualizarFechaHora();
 
-/* STORAGE */
-const hash=t=>btoa(t);
-const getCols=()=>JSON.parse(localStorage.getItem('colaboradores'))||[];
-const setCols=d=>localStorage.setItem('colaboradores',JSON.stringify(d));
-let actual=null;
+let registros=JSON.parse(localStorage.getItem("ganado")) || []
 
-/* NAV */
-function ocultar(){document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'))}
-function volverInicio(){ocultar();inicio.classList.remove('hidden')}
-function volverPanelAdmin(){ocultar();panelAdmin.classList.remove('hidden')}
-function volverPanelCol(){ocultar();panelCol.classList.remove('hidden')}
+function calcular(){
 
-/* ADMIN */
-function abrirAdmin(){ocultar();loginAdmin.classList.remove('hidden')}
-function validarAdmin(){adminPass.value==='1234'?(ocultar(),panelAdmin.classList.remove('hidden')):alert('Contraseña incorrecta')}
-function mostrarAlta(){ocultar();altaCol.classList.remove('hidden')}
-function guardarColaborador(){
-let c=getCols();
-c.push({numero:c.length+1,nombre:colNombre.value,password:hash(colPassNew.value),
-zona:colZona.value,estatus:colEstatus.value,fechaAlta:new Date().toLocaleDateString(),beneficiarios:[]});
-setCols(c);alert('Colaborador guardado');volverPanelAdmin()
-}
-function mostrarLista(){
-ocultar();listaCol.classList.remove('hidden');lista.innerHTML='';
-getCols().forEach(c=>{
-lista.innerHTML+=`<div class="list"><b>${c.numero} - ${c.nombre}</b><br><span class="small">${c.zona} | ${c.estatus}</span></div>`;
-});
-}
-function mostrarReporte(){
-ocultar();reporte.classList.remove('hidden');
-filtroCol.innerHTML='<option value="">Selecciona colaborador</option>';
-getCols().forEach((c,i)=>filtroCol.innerHTML+=`<option value="${i}">${c.numero} - ${c.nombre}</option>`);
-tablaReporte.innerHTML='';
-}
-function cargarReporte(){
-let i=filtroCol.value;if(i===''){tablaReporte.innerHTML='';return;}
-let c=getCols()[i],h='';
-c.beneficiarios.forEach(b=>h+=`<div class="list"><b>${b.nombre}</b><br><span class="small">${b.telefono} | ${b.correo}</span></div>`);
-tablaReporte.innerHTML=h||'<p class="small">Sin beneficiarios</p>';
-}
-function exportarExcel(){
-let d=[];getCols().forEach(c=>c.beneficiarios.forEach(b=>d.push({Colaborador:c.nombre,Beneficiario:b.nombre,Telefono:b.telefono,Correo:b.correo})));
-let ws=XLSX.utils.json_to_sheet(d),wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,'Reporte');
-XLSX.writeFile(wb,'reporte_beneficiarios.xlsx');
-}
-function exportarPDF(){html2pdf().from(tablaReporte).save('reporte_beneficiarios.pdf')}
+let pesoLlegada=parseFloat(document.getElementById("pesoLlegada").value)||0
+let pesoOrigen=parseFloat(document.getElementById("pesoOrigen").value)||0
+let precio=parseFloat(document.getElementById("precio").value)||0
+let precioArete=parseFloat(document.getElementById("precioArete").value)||0
+let trae=document.getElementById("traeArete").value
 
-/* COLABORADOR */
-function abrirColaborador(){ocultar();cargarColaboradores();loginCol.classList.remove('hidden')}
-function cargarColaboradores(){
-selectCol.innerHTML='';
-getCols().forEach((c,i)=>selectCol.innerHTML+=`<option value="${i}">${c.numero} - ${c.nombre}</option>`);
+let merma=pesoOrigen-pesoLlegada
+if(merma<0)merma=0
+
+let porcentaje=0
+if(pesoOrigen>0){
+porcentaje=(merma/pesoOrigen)*100
 }
-function validarColaborador(){
-let i=selectCol.value,c=getCols()[i];
-if(!c||c.password!==hash(colPass.value)){alert('Contraseña incorrecta');return}
-actual=i;ocultar();panelCol.classList.remove('hidden');
-infoCol.innerHTML=`<b>${c.nombre}</b><br>Zona: ${c.zona}<br>Estatus: ${c.estatus}<br>Fecha alta: ${c.fechaAlta}`;
+
+let total=pesoOrigen*precio
+
+let totalFinal=total
+if(trae==="si"){
+totalFinal=total+precioArete
 }
-function mostrarBenefCol(){ocultar();benefCol.classList.remove('hidden');listarBenefCol()}
-function guardarBenefCol(){
-let c=getCols();
-c[actual].beneficiarios.push({nombre:bNombre.value,telefono:bTel.value,correo:bCorreo.value,direccion:bDir.value,estatus:bEst.value,fechaIngreso:new Date().toLocaleDateString()});
-setCols(c);listarBenefCol()
+
+document.getElementById("merma").innerText=merma.toFixed(2)
+document.getElementById("porcentaje").innerText=porcentaje.toFixed(2)
+document.getElementById("total").innerText=total.toFixed(2)
+document.getElementById("totalFinal").innerText=totalFinal.toFixed(2)
+
 }
-function listarBenefCol(){
-listaBen.innerHTML='';
-getCols()[actual].beneficiarios.forEach((b,i)=>listaBen.innerHTML+=`<div class="list"><b>${b.nombre}</b><br><span class="small">${b.telefono}</span><button onclick="eliminarBenef(${i})">Eliminar</button></div>`);
+
+function guardar(){
+
+let registro={
+fecha:document.getElementById("fecha").value,
+propietario:document.getElementById("propietario").value,
+sexo:document.getElementById("sexo").value,
+arete1:document.getElementById("arete1").value,
+arete2:document.getElementById("arete2").value,
+pesoLlegada:document.getElementById("pesoLlegada").value,
+pesoOrigen:document.getElementById("pesoOrigen").value,
+precio:document.getElementById("precio").value,
+totalFinal:document.getElementById("totalFinal").innerText
 }
-function eliminarBenef(i){let c=getCols();c[actual].beneficiarios.splice(i,1);setCols(c);listarBenefCol()}
+
+registros.push(registro)
+
+localStorage.setItem("ganado",JSON.stringify(registros))
+
+alert("Registro guardado")
+
+}
+
+function verReportes(){
+
+document.getElementById("pantallaRegistro").classList.add("hidden")
+document.getElementById("pantallaReportes").classList.remove("hidden")
+
+mostrarLista(registros)
+
+}
+
+function volver(){
+
+document.getElementById("pantallaReportes").classList.add("hidden")
+document.getElementById("pantallaRegistro").classList.remove("hidden")
+
+}
+
+function mostrarLista(datos){
+
+let lista=document.getElementById("lista")
+
+lista.innerHTML=""
+
+datos.forEach(r=>{
+
+lista.innerHTML+=`
+
+<div class="registro">
+
+<b>Fecha:</b> ${r.fecha}<br>
+<b>Propietario:</b> ${r.propietario}<br>
+<b>Sexo:</b> ${r.sexo}<br>
+<b>Arete:</b> ${r.arete1}<br>
+<b>Total Final:</b> $${r.totalFinal}
+
+</div>
+
+`
+
+})
+
+}
+
+function filtrar(){
+
+let prop=document.getElementById("filtroProp").value.toLowerCase()
+let sexo=document.getElementById("filtroSexo").value
+
+let resultado=registros.filter(r=>{
+
+let cumpleProp=r.propietario.toLowerCase().includes(prop)
+let cumpleSexo=!sexo || r.sexo===sexo
+
+return cumpleProp && cumpleSexo
+
+})
+
+mostrarLista(resultado)
+
+}
+
 </script>
 
 </body>
 </html>
-
-
 
